@@ -24,7 +24,8 @@ def home():
 
 @app.route("/about")
 def about():
-    return render_template('about.html', title='About')
+    projects = Project.query.all()
+    return render_template('about.html', title='Projects', outString = projects)
                            
 @app.route("/assign/<essn>/<pno>/delete", methods=['POST'])
 def delete_assign(essn , pno):

@@ -1,4 +1,13 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1>About Page</h1>
+    {% for row in outString %}
+        <article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">	  
+              <h2><a class="article-title" href="#">{{ row['project_id'] }} - {{ row['project_name'] }}</a></h2>		  
+            </div>
+			<small class="text-muted">{{ row['description'] }}</small>
+          </div>
+        </article>
+     {% endfor %}
 {% endblock content %}
