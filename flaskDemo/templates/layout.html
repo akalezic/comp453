@@ -28,8 +28,15 @@
             <div class="navbar-nav mr-auto">
               <a class="nav-item nav-link" href="{{ url_for('home') }}">Home</a>
               <a class="nav-item nav-link" href="{{ url_for('about') }}">Projects</a>
-              <a class="nav-item nav-link" href="{{ url_for('new_item') }}">New Item</a>
-              <a class="nav-item nav-link" href="{{ url_for('new_project') }}">New Project</a>
+              <div class="dropdown navbar-dark bg-steel" >
+                <button class="btn navbar-dark nav-link bg-steel dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Create
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <a class="dropdown-item" href="{{ url_for('new_item') }}">Create New Item</a>
+                  <a class="dropdown-item" href="{{ url_for('new_project') }}">Create New Project</a>
+                </div>
+              </div>
             </div>
             <!-- Navbar Right Side -->
 			<div class="navbar-nav">
