@@ -13,12 +13,13 @@ from datetime import datetime
 @app.route("/home")
 def home():
     results = Item.query.all()
-    return render_template('home.html', outString = results)
+    vendors = Vendor.query.all()
+    return render_template('home.html', outString = results, vendors=vendors)
 
-@app.route("/about")
-def about():
-    projects = Project.query.all()
-    return render_template('about.html', title='Projects', outString = projects)
+@app.route("/projects")
+def projects():
+    projectsData = Project.query.all()
+    return render_template('projects.html', title='Projects', outString = projectsData)
     
 @app.route("/register", methods=['GET', 'POST'])
 def register():
