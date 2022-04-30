@@ -4,7 +4,7 @@ from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from flaskDemo import app, db
 from flaskDemo.models import Buyer, Buyer_Order, Item, Item_Order, Vendor, Project, Order_Line, Required_Items
-from flaskDemo.forms import AddItemForm
+from flaskDemo.forms import AddItemForm, AddProjectForm
 from datetime import datetime
 
 
@@ -32,3 +32,17 @@ def new_item():
         flash("You have added the item!", "success")
         return redirect(url_for("home"))
     return render_template("create_item.html", title="New Item", form=form)
+    
+@app.route("/addproject/new", methods=['GET', 'POST'])
+def new_project():
+    form = AddProjectForm()
+    if form.validate_on_submit():
+        add_project = Project(project_id=form.project_id.data, project_name=form.project_name.data,
+                              intent_to_sell=form.intent_to_sell.data, description=form.description.data or None,
+                              date_started=form.date_started.data or None, date_completed=form.date_completed.data or None,
+                              est_work_time=form.est_work_time.data)
+        db.session.add(add_project)
+        db.session.commit()
+        flash("You have added the project!", "success")
+        return redirect(url_for("about"))
+    return render_template("create_project.html", title="New Project", form=form)
