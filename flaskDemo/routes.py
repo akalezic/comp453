@@ -20,6 +20,21 @@ def home():
 def projects():
     projectsData = Project.query.all()
     return render_template('projects.html', title='Projects', outString = projectsData)
+    
+@app.route("/projects/<project_id>")
+@login_required
+def project(project_id):
+    project = Project.query.get_or_404(project_id)
+    return render_template('project.html', title=str(project.project_id), project=project, now=datetime.utcnow())
+    
+@app.route("/projects/<project_id>/delete", methods=['POST'])
+@login_required
+def delete_project(project_id):
+    proj = Project.query.get_or_404(project_id)
+    db.session.delete(proj)
+    db.session.commit()
+    flash('The project has been removed!', 'success')
+    return redirect(url_for('projects'))
 
 @app.route("/inventory")
 def inventory():
@@ -102,6 +117,21 @@ def account():
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     return render_template('account.html', title='Account',
                            image_file=image_file, form=form)
+                           
+@app.route("/item/<item_id>")
+@login_required
+def item(item_id):
+    item = Item.query.get_or_404(item_id)
+    return render_template('item.html', title=str(item.item_id), item=item, now=datetime.utcnow())
+    
+@app.route("/item/<item_id>/delete", methods=['POST'])
+@login_required
+def delete_item(item_id):
+    item = Item.query.get_or_404(item_id)
+    db.session.delete(item)
+    db.session.commit()
+    flash('The item has been removed!', 'success')
+    return redirect(url_for('home'))
     
 @app.route("/additem/new", methods=['GET', 'POST'])
 @login_required
@@ -116,7 +146,7 @@ def new_item():
         db.session.commit()
         flash("You have added the item!", "success")
         return redirect(url_for("home"))
-    return render_template("create_item.html", title="New Item", form=form)
+    return render_template("create_item.html", title="New Item", form=form)    
     
 @app.route("/addproject/new", methods=['GET', 'POST'])
 @login_required
@@ -130,5 +160,5 @@ def new_project():
         db.session.add(add_project)
         db.session.commit()
         flash("You have added the project!", "success")
-        return redirect(url_for("about"))
+        return redirect(url_for("projects"))
     return render_template("create_project.html", title="New Project", form=form)

@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block content %}
+  <article class="media content-section">
+<!--    <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/default.jpg')}}"> -->
+    <div class="media-body">
+      <div class="article-metadata">
+        <h2><a class="mr-2">{{ item.item_id }} - {{ item.name }}</a></h2>
+        <small class="text-muted">{{now.strftime('%A %B, %d %Y %H:%M:%S')}}</small>
+ 
+      </div>
+		<div>
+            <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Remove</button>
+        </div>
+    </div>
+  </article>
+  <!-- Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel">Remove item?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <form action="{{ url_for('delete_item', item_id=item.item_id) }}" method="POST">
+            <input class="btn btn-danger" type="submit" value="Remove">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}

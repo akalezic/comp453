@@ -54,9 +54,11 @@ class UpdateAccountForm(FlaskForm):
             user = User.query.filter_by(email=email.data).first()
             if user:
                 raise ValidationError('That email is taken. Please choose a different one.')
-            
-class AddItemForm(FlaskForm):
-    item_id = IntegerField("Item ID", validators=[DataRequired()])
+                
+
+                
+class UpdateItemForm(FlaskForm):
+    item_id = HiddenField("")
     description = StringField("Description", validators=[DataRequired(), Length(min=1, max=50)])
     name = StringField("Item Name", validators=[DataRequired(), Length(min=1, max=20)])
     quantity = DecimalField("Quantity", places = 2, validators=[DataRequired()])
@@ -67,6 +69,15 @@ class AddItemForm(FlaskForm):
     size = StringField("Size", validators=[Length(max=20)])
     finish = StringField("Finish", validators=[Length(max=20)])
     shape = StringField("Shape", validators=[Length(max=20)])
+    submit = SubmitField("Update this item")
+    
+    def validate_name(self, name):
+        name = Item.query.filter_by(name=self.name.data).first()
+        if name:
+            raise ValidationError('That item name is already taken. Please choose a different name.')
+            
+class AddItemForm(UpdateItemForm):
+    item_id = IntegerField("Item ID", validators=[DataRequired()])
     submit = SubmitField("Add Item")
     
     def validate_item_id(self, item_id):
