@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block content %}
+    {% for row in outString %}
+       <article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="#">Order ID: {{ row['order_id'] }}</a>		  	  
+        </article>
+     {% endfor %}
+{% endblock content %}
