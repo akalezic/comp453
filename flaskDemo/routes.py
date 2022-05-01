@@ -3,7 +3,7 @@ import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from flaskDemo import app, db, bcrypt
-from flaskDemo.models import User, Buyer, Buyer_Order, Item, Item_Order, Vendor, Project, Order_Line, Required_Items
+from flaskDemo.models import User, Buyer, Buyer_Order, Item, Item_Order, Vendor, Project, Order_Line, Required_Items, Inventory
 from flaskDemo.forms import AddItemForm, AddProjectForm, RegistrationForm, LoginForm, UpdateAccountForm
 from flask_login import login_user, current_user, logout_user, login_required
 from datetime import datetime
@@ -20,6 +20,21 @@ def home():
 def projects():
     projectsData = Project.query.all()
     return render_template('projects.html', title='Projects', outString = projectsData)
+
+@app.route("/inventory")
+def inventory():
+    inventory = Inventory.query.all()
+    return render_template('inventory.html', outString = inventory)
+
+@app.route("/inventory/<project_id>")
+def inve(project_id):
+    inve = Inventory.query.get_or_404(project_id)
+    return render_template('inve.html', inve=inve)
+    
+@app.route("/customerorder")
+def customerorder():
+    customerorder = Order_Line.query.join(Inventory,Order_Line.invID == Inventory.project_id).add_columns(Order_Line.invID, Inventory.item_desc).join(Buyer_Order, Buyer_Order.order_id == Order_Line.order_id).add_columns(Order_Line.order_id, Buyer_Order.date)
+    return render_template('customerorders.html', outString = customerorder)
     
 @app.route("/register", methods=['GET', 'POST'])
 def register():

@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block content %}
+  <article class="media content-section">
+    <div class="media-body">
+      <div class="article-metadata">
+        <a class="mr-2" href="#">{{ inve.project_id }} {{ inve.item_desc }}</a>
+		<h2><a class="article-title">Quantity On Hand: {{ inve.qtyOnHand }}</a></h2>
+		<h2><a class="article-title">Sell Price: ${{ inve.sell_price }}</a></h2>
+          <div>
+            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="#">Update</a>
+            <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+          </div>
+      </div>
+    </div>
+  </article>
+{% endblock content %}

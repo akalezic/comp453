@@ -45,3 +45,6 @@ class Order_Line(db.Model):
     
 class Required_Items(db.Model):
     __table__ = db.Model.metadata.tables['required_items']
+
+class Inventory(db.Model):
+    __table__ = db.Model.metadata.tables['inventory']
