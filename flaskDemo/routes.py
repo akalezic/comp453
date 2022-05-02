@@ -221,3 +221,13 @@ def new_project():
         flash("You have added the project!", "success")
         return redirect(url_for("projects"))
     return render_template("create_project.html", title="New Project", form=form, legend="New Project")
+
+@app.route("/project/<project_id>/add_to_inventory", methods=['GET', 'POST'])
+@login_required
+def add_to_inventory(project_id):
+    project = Project.query.get_or_404(project_id)
+    add_inventory = Inventory(project_id=project.project_id, item_name = project.project_name, item_desc = project.description, qtyOnHand =1, production_cost = 1.00, sell_price = 1.00)
+    db.session.add(add_inventory)
+    db.session.commit()
+    flash("You have added the project to inventory! Make sure to update your production cost and sell price!", "success")
+    return redirect(url_for("inventory"))
