@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="content-section">
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+			<legend class="border-bottom mb-4">{{ legend }}</legend>
+            <div class="form-group">
+                {{ form.qtyOnHand.label(class="form-control-label") }}
+                {% if form.qtyOnHand.errors %}
+                    {{ form.qtyOnHand(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.qtyOnHand.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.qtyOnHand(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+			<div class="form-group">
+                {{ form.production_cost.label(class="form-control-label") }}
+                {% if form.production_cost.errors %}
+                    {{ form.production_cost(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.production_cost.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.production_cost(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+			<div class="form-group">
+                {{ form.sell_price.label(class="form-control-label") }}
+                {% if form.sell_price.errors %}
+                    {{ form.sell_price(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.sell_price.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.sell_price(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+        </fieldset>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+</div>
+{% endblock content %}

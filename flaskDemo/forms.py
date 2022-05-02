@@ -108,3 +108,12 @@ class AddProjectForm(UpdateProjectForm):
         proj = Project.query.filter_by(project_id=self.project_id.data).first()
         if proj:
             raise ValidationError("That Project ID is already taken")
+            
+class AddProjectToInventoryForm(FlaskForm):
+    project_id = HiddenField("")
+    item_name = HiddenField("")
+    item_desc = HiddenField("")
+    qtyOnHand = IntegerField("Quantity On Hand", validators=[Optional()])
+    production_cost = DecimalField("Production Cost", places = 2, validators=[Optional()])
+    sell_price = DecimalField("Sell Price", places = 2, validators=[Optional()])
+    submit = SubmitField("Add project to inventory")

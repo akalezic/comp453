@@ -4,7 +4,7 @@ from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from flaskDemo import app, db, bcrypt
 from flaskDemo.models import User, Buyer, Buyer_Order, Item, Item_Order, Vendor, Project, Order_Line, Required_Items, Inventory
-from flaskDemo.forms import AddItemForm, AddProjectForm, RegistrationForm, LoginForm, UpdateAccountForm, UpdateItemForm, UpdateProjectForm
+from flaskDemo.forms import AddItemForm, AddProjectForm, RegistrationForm, LoginForm, UpdateAccountForm, UpdateItemForm, UpdateProjectForm, AddProjectToInventoryForm
 from flask_login import login_user, current_user, logout_user, login_required
 from datetime import datetime
 
@@ -226,8 +226,22 @@ def new_project():
 @login_required
 def add_to_inventory(project_id):
     project = Project.query.get_or_404(project_id)
-    add_inventory = Inventory(project_id=project.project_id, item_name = project.project_name, item_desc = project.description, qtyOnHand =1, production_cost = 1.00, sell_price = 1.00)
-    db.session.add(add_inventory)
-    db.session.commit()
-    flash("You have added the project to inventory! Make sure to update your production cost and sell price!", "success")
-    return redirect(url_for("inventory"))
+    inventory_check = Inventory.query.filter_by(project_id=project_id).first()
+    if inventory_check:
+        flash("This project is already in the inventory!", "danger")
+        return redirect(url_for("project", project_id=project_id))
+    elif not inventory_check:
+        form = AddProjectToInventoryForm()
+        if form.validate_on_submit():
+            add_inventory = Inventory(project_id=project.project_id, item_name = project.project_name, 
+                                      item_desc = project.description, qtyOnHand = form.qtyOnHand.data or None,
+                                      production_cost = form.production_cost.data or None, sell_price = form.sell_price.data or None)
+            db.session.add(add_inventory)
+            db.session.commit()
+            flash("You have added the project to inventory!", "success")
+            return redirect(url_for("inventory"))
+        elif request.method == 'GET':
+            form.project_id.data = project.project_id
+            form.item_name = project.project_name
+            form.item_desc = project.description
+        return render_template("create_inventory.html", title="Add to Inventory", form=form)
