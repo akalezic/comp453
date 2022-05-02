@@ -4,7 +4,13 @@
        <article class="media content-section">
           <div class="media-body">
             <div class="article-metadata">
-              <a class="mr-2" href="#">Order ID: {{ row['order_id'] }}</a>		  	  
+              <a class="article-title">Order ID: {{ row['order_id'] }}</a>
+            </div>
+              <small class="text-muted">Order Placed: {{ row['date'] }}</small>
+              <br><small class="text-muted">Buyer ID: {{ row['buyer_id'] }}</small></br>
+              <small class="text-muted">Item: {{ row['item_desc']}}</small>
+              <br><small class="text-muted">Quantity Ordered: {{ row['qtyOrdered'] }}</small></br>
+            </div>		  	  
         </article>
      {% endfor %}
 {% endblock content %}

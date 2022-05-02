@@ -73,7 +73,7 @@ def inve(project_id):
     
 @app.route("/customerorder")
 def customerorder():
-    customerorder = Order_Line.query.join(Inventory,Order_Line.invID == Inventory.project_id).add_columns(Order_Line.invID, Inventory.item_desc).join(Buyer_Order, Buyer_Order.order_id == Order_Line.order_id).add_columns(Order_Line.order_id, Buyer_Order.date)
+    customerorder = Order_Line.query.join(Inventory,Order_Line.invID == Inventory.project_id).add_columns(Order_Line.invID, Inventory.item_desc).join(Buyer_Order, Buyer_Order.order_id == Order_Line.order_id).add_columns(Order_Line.order_id, Buyer_Order.date, Order_Line.qtyOrdered, Buyer_Order.buyer_id)
     buyers = Buyer.query.all()
     return render_template('customerorders.html', outString = customerorder, buyers=buyers)
     
