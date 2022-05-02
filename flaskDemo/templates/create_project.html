@@ -1,11 +1,12 @@
 {% extends "layout.html" %}
 {% block content %}
-<h2>Add Project:</h2>
 <div class="content-section">
     <form method="POST" action="">
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
-			<div class="form-group">
+            <legend class="border-bottom mb-4">{{ legend }}</legend>
+			{% if legend != "Update Project" %}
+            <div class="form-group">
                 {{ form.project_id.label(class="form-control-label") }}
                 {% if form.project_id.errors %}
                     {{ form.project_id(class="form-control form-control-lg is-invalid") }}
@@ -18,7 +19,9 @@
                     {{ form.project_id(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
-			<div class="form-group">
+			{% endif %}
+			
+            <div class="form-group">
                 {{ form.project_name.label(class="form-control-label") }}
                 {% if form.project_name.errors %}
                     {{ form.project_name(class="form-control form-control-lg is-invalid") }}

@@ -71,10 +71,10 @@ class UpdateItemForm(FlaskForm):
     shape = StringField("Shape", validators=[Length(max=20)])
     submit = SubmitField("Update this item")
     
-    def validate_name(self, name):
-        name = Item.query.filter_by(name=self.name.data).first()
-        if name:
-            raise ValidationError('That item name is already taken. Please choose a different name.')
+    def validate_dname(self, name):
+         dept = Item.query.filter_by(name=name.data).first()
+         if dept and (str(dept.item_id) != str(self.item_id.data)):
+             raise ValidationError('That item name is already being used. Please choose a different name.')
             
 class AddItemForm(UpdateItemForm):
     item_id = IntegerField("Item ID", validators=[DataRequired()])
@@ -90,14 +90,18 @@ class AddItemForm(UpdateItemForm):
         if desc:
             raise ValidationError("That name already exists")
             
-class AddProjectForm(FlaskForm):
-    project_id = IntegerField("Project ID", validators=[DataRequired()])
+class UpdateProjectForm(FlaskForm):
+    project_id = HiddenField("")
     project_name = StringField("Name", validators=[DataRequired(), Length(min=1, max=20)])
     intent_to_sell = StringField("Intent to Sell", validators=[DataRequired(), Length(min=1, max=20)])
     description = StringField("Description", validators=[Length(max=50)])
     date_started = DateField("Date Started", format='%Y-%m-%d', validators=[Optional()])
     date_completed = DateField("Date Completed", format='%Y-%m-%d', validators=[Optional()])
     est_work_time = DecimalField("Estimated Work Time", places = 2, validators=[DataRequired()])
+    submit = SubmitField("Update this project")
+          
+class AddProjectForm(UpdateProjectForm):
+    project_id = IntegerField("Project ID", validators=[DataRequired()])
     submit = SubmitField("Add Project")
     
     def validate_project_id(self, project_id):

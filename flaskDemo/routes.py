@@ -4,7 +4,7 @@ from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from flaskDemo import app, db, bcrypt
 from flaskDemo.models import User, Buyer, Buyer_Order, Item, Item_Order, Vendor, Project, Order_Line, Required_Items, Inventory
-from flaskDemo.forms import AddItemForm, AddProjectForm, RegistrationForm, LoginForm, UpdateAccountForm
+from flaskDemo.forms import AddItemForm, AddProjectForm, RegistrationForm, LoginForm, UpdateAccountForm, UpdateItemForm, UpdateProjectForm
 from flask_login import login_user, current_user, logout_user, login_required
 from datetime import datetime
 
@@ -26,6 +26,31 @@ def projects():
 def project(project_id):
     project = Project.query.get_or_404(project_id)
     return render_template('project.html', title=str(project.project_id), project=project, now=datetime.utcnow())
+    
+@app.route("/projects/<project_id>/update", methods=['GET', 'POST'])
+@login_required
+def update_project(project_id):
+    project = Project.query.get_or_404(project_id)
+    form = UpdateProjectForm()
+    if form.validate_on_submit():
+        project.project_name = form.project_name.data
+        project.intent_to_sell = form.intent_to_sell.data
+        project.description = form.description.data or None
+        project.date_started = form.date_started.data or None
+        project.date_completed = form.date_completed.data or None
+        project.est_work_time = form.est_work_time.data
+        db.session.commit()
+        flash('The project has been updated!', 'success')
+        return redirect(url_for('projects', project=project))
+    elif request.method == 'GET':
+        form.project_name.data = project.project_name
+        form.intent_to_sell.data = project.intent_to_sell
+        form.description.data = project.description
+        form.date_started.data = project.date_started
+        form.date_completed.data = project.date_completed
+        form.est_work_time.data = project.est_work_time
+    return render_template('create_project.html', title='Update Project',
+                           form=form, legend='Update Project')
     
 @app.route("/projects/<project_id>/delete", methods=['POST'])
 @login_required
@@ -125,6 +150,39 @@ def item(item_id):
     item = Item.query.get_or_404(item_id)
     return render_template('item.html', title=str(item.item_id), item=item, now=datetime.utcnow())
     
+@app.route("/item/<item_id>/update", methods=['GET', 'POST'])
+@login_required
+def update_item(item_id):
+    item = Item.query.get_or_404(item_id)
+    form = UpdateItemForm()
+    if form.validate_on_submit():
+        item.description = form.description.data
+        item.name = form.name.data
+        item.quantity_on_hand = form.quantity.data
+        item.unit = form.unit.data or None
+        item.item_type = form.item_type.data
+        item.tool_condition = form.tool_condition.data or None
+        item.color = form.color.data or None
+        item.size = form.size.data or None
+        item.finish = form.finish.data or None
+        item.shape = form.shape.data or None
+        db.session.commit()
+        flash('The item has been updated!', 'success')
+        return redirect(url_for('home', item=item))
+    elif request.method == 'GET':
+        form.description.data = item.description
+        form.name.data = item.name
+        form.quantity.data = item.quantity_on_hand
+        form.unit.data = item.unit
+        form.item_type.data = item.item_type
+        form.tool_condition.data = item.tool_condition
+        form.color.data = item.color
+        form.size.data = item.size
+        form.finish.data = item.finish
+        form.shape.data = item.shape
+    return render_template('create_item.html', title='Update Item',
+                           form=form, legend='Update Item')
+    
 @app.route("/item/<item_id>/delete", methods=['POST'])
 @login_required
 def delete_item(item_id):
@@ -147,7 +205,7 @@ def new_item():
         db.session.commit()
         flash("You have added the item!", "success")
         return redirect(url_for("home"))
-    return render_template("create_item.html", title="New Item", form=form)    
+    return render_template("create_item.html", title="New Item", form=form, legend="New Item")    
     
 @app.route("/addproject/new", methods=['GET', 'POST'])
 @login_required
@@ -162,4 +220,4 @@ def new_project():
         db.session.commit()
         flash("You have added the project!", "success")
         return redirect(url_for("projects"))
-    return render_template("create_project.html", title="New Project", form=form)
+    return render_template("create_project.html", title="New Project", form=form, legend="New Project")
