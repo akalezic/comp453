@@ -244,4 +244,4 @@ def add_to_inventory(project_id):
             form.project_id.data = project.project_id
             form.item_name = project.project_name
             form.item_desc = project.description
-        return render_template("create_inventory.html", title="Add to Inventory", form=form)
+        return render_template("create_inventory.html", title="Add to Inventory", form=form, legend="Add to Inventory")
