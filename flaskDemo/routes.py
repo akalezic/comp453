@@ -64,7 +64,8 @@ def delete_project(project_id):
 @app.route("/inventory")
 def inventory():
     inventory = Inventory.query.all()
-    return render_template('inventory.html', outString = inventory)
+    nums = db.session.execute('SELECT inventory.item_desc, COUNT(order_line.invID) AS numOfOrders FROM order_line, inventory WHERE order_line.invID = inventory.project_id GROUP BY order_line.invID')
+    return render_template('inventory.html', outString = inventory, nums=nums)
 
 @app.route("/inventory/<project_id>")
 def inve(project_id):

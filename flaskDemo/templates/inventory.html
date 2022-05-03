@@ -13,3 +13,16 @@
         </article>
      {% endfor %}
 {% endblock content %}
+
+{% block sidebar%}
+<div class="content-section">
+    <h3>Inventory Item Previous Sales</h3>
+    <p class='text-muted'>
+      <ul class="list-group">
+        {% for num in nums %}
+			<li class="list-group-item list-group-item-light">{{ num.item_desc }}: {{ num.numOfOrders }} Sale</li>
+        {% endfor %}
+      </ul>
+    </p>
+  </div>
+{% endblock sidebar %}
