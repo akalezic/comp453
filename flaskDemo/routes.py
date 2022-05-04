@@ -5,10 +5,11 @@ from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from flaskDemo import app, db, bcrypt
 from flaskDemo.models import User, Buyer, Buyer_Order, Item, Item_Order, Vendor, Project, Order_Line, Required_Items, Inventory, Buyer_Order
-from flaskDemo.forms import AddItemForm, AddProjectForm, CreateOrder, RegistrationForm, LoginForm, UpdateAccountForm, UpdateItemForm, UpdateProjectForm, AddProjectToInventoryForm, MarkAsSold
+from flaskDemo.forms import AddItemForm, AddProjectForm, CreateOrder, RegistrationForm, LoginForm, UpdateAccountForm, UpdateItemForm, UpdateProjectForm, AddProjectToInventoryForm, MarkAsSold, AddOrderLines
 from flask_login import login_user, current_user, logout_user, login_required
 from datetime import datetime
 from sqlalchemy import func
+
 
 
 
@@ -92,6 +93,21 @@ def sell(project_id):
         
     return render_template("sell.html", title="Add Item to Order", form=form, legend="Add Item '" + str(project_id.item_name) + "' to Order")
 
+@app.route("/createorder/<order_id>/addOrderLine", methods=['GET', 'POST'])
+def addOrderLine(order_id):
+    dbitems=Inventory.query.all()
+    item_list=[(item.project_id, item.item_name) for item in dbitems]
+    form = AddOrderLines()
+    form.items.choices = item_list
+    if form.validate_on_submit():
+        item = Order_Line(order_id=order_id, invID=form.items.data, qtyOrdered=form.qty.data, total_price=int((Inventory.query.get(form.items.data).sell_price))*(form.qty.data))
+        db.session.add(item)
+        db.session.commit()
+        flash ("Item added to order", "success")
+        return redirect(url_for('customerorder'))
+    return render_template("addOrderItem.html", title="Add Items to Order", form=form, legend="Add Items to Order", order_id=order_id)
+
+
 
 @app.route("/createorder", methods=['GET', 'POST'])
 @login_required
@@ -107,7 +123,7 @@ def createOrder():
         db.session.add(order)
         db.session.commit()
         flash('Order created!', 'success')
-        return redirect(url_for('inventory'))
+        return redirect(url_for('addOrderLine', order_id=newID))
 
     return render_template("createorder.html", title="New Order", form=form, legend="New Order (Order ID: " + str(newID) + ")" )
     

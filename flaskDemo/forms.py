@@ -2,10 +2,10 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, IntegerField, DateField, SelectField, HiddenField, DecimalField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError,Regexp, Optional
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError,Regexp, Optional, InputRequired
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from flaskDemo import db
-from flaskDemo.models import Buyer_Order, User, Item, Project, Buyer
+from flaskDemo.models import Buyer_Order, Order_Line, User, Item, Project, Buyer, Inventory
 from wtforms.fields.html5 import DateField
 
 class RegistrationForm(FlaskForm):
@@ -145,16 +145,27 @@ class CreateOrder(FlaskForm):
             if len(self.buyerName.data) == 0 or len(self.address.data) == 0:
                 self.buyer_id.errors.append("That Buyer ID doesn't exist. Fill out Buyer ID, name, and Address to continue")
                 result = False
-        elif buyer.name != self.buyerName.data:
+        elif len(self.buyerName.data) > 0 and buyer.name != self.buyerName.data:
             self.buyer_id.errors.append(f"Buyer ID {buyer.buyer_id} exists but this data doesn't match the registered name: {str(buyer.name)}. Use a different buyer ID or leave  the name field blank.")
             result = False
-        elif buyer.address != self.address.data:
+        elif len(self.address.data) > 0 and buyer.address != self.address.data:
             self.buyer_id.errors.append(f"Buyer ID {buyer.buyer_id} exists but this data doesn't match the registered address: {str(buyer.address)}. Use a different buyer ID or leave the address field blank.")
             result = False
         return result
 
+
 class AddOrderLines(FlaskForm):
-    project_id =  SelectField("Add Inventory to Order", [DataRequired()])
-    submit = SubmitField("Add to Order")
+    order_id = HiddenField("")
+    items = SelectField('Inventory Items', validators=[InputRequired()]) 
+    qty = StringField("Quantity Purchased", validators=[DataRequired()])
+    submit = SubmitField("Add Item")
+
+    def validate_inv(self, items):
+        order = Order_Line.query.get(items=self.items.data, order_id=context.order_id).first()
+        if order:
+            raise ValidationError("Order already has this item.")
+    
+
+
     
     

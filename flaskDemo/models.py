@@ -48,3 +48,5 @@ class Required_Items(db.Model):
 
 class Inventory(db.Model):
     __table__ = db.Model.metadata.tables['inventory']
+    def __repr__(self):
+        return f"Inventory ID #{self.project_id} {self.item_name.strip()}"
