@@ -297,3 +297,8 @@ def get_order_total(order_id):
     text = textSum.replace("(Decimal('",'')
     editedText = text.replace("'),)", '')
     return render_template("ordertotal.html", outString = orderTotal, sum=editedText)
+
+@app.route("/restock_items", methods=['GET', 'POST'])
+def restockItems():
+    lowItems = db.session.execute('SELECT item.name, item.item_type, item.quantity_on_hand FROM item WHERE item.quantity_on_hand < (SELECT MIN(qty_required) FROM required_items)')
+    return render_template("restockItems.html", outString = lowItems)
