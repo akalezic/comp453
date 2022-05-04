@@ -6,7 +6,7 @@
         <div class="article-metadata">	  
           <h2><a class="article-title" href="{{ url_for('item', item_id=row.item_id) }}">{{ row['name'] }} - {{ row['item_type'] }}</a></h2>		  
         </div>
-        <br><small class="text-muted">Quantity: {{ row['quantity_on_hand'] }}</small></br>
+        <small class="text-muted">Quantity: {{ row['quantity_on_hand'] }}</small>
       </div>
     </article>
   {% endfor %}
