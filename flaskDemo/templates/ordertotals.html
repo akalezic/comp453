@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block content %}
+    {% for row in outString %}
+       <article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="article-title" href="{{ url_for('get_order_total', order_id=row.order_id, ivdID=row.invID) }}">Order ID: {{ row['order_id'] }}</a>
+            </div>
+              <small class="text-muted">Item ID: {{ row['invID'] }}</small>
+              <br><small class="text-muted">Quantity Ordered: {{ row['qtyOrdered'] }}</small></br>
+              <small class="text-muted">Total Sale: {{ row['total_price'] }}</small>
+          </div>		  	  
+        </article>
+     {% endfor %}
+     <article class="media content-section">
+        <div>
+            <div class="article-title">Order Total: ${{ sum }}</div>
+        </div>
+    </article>
+{% endblock content %}

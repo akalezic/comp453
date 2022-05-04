@@ -285,3 +285,15 @@ def add_to_inventory(project_id):
             form.item_name = project.project_name
             form.item_desc = project.description
         return render_template("create_inventory.html", title="Add to Inventory", form=form, legend="Add to Inventory")
+
+@app.route("/customerorder/<order_id>/order_total", methods=['GET', 'POST'])
+@login_required
+def get_order_total(order_id):
+    orderTotal = Order_Line.query.join(Buyer_Order, Order_Line.order_id == Buyer_Order.order_id
+    ).add_columns(Order_Line.invID, Order_Line.qtyOrdered, Order_Line.order_id, Order_Line.total_price
+    ).filter(Order_Line.order_id == order_id, Buyer_Order.buyer_id == Buyer_Order.buyer_id)
+    sum = db.session.query(func.sum(Order_Line.total_price)).group_by(Order_Line.order_id).first()
+    textSum = str(sum)
+    text = textSum.replace("(Decimal('",'')
+    editedText = text.replace("'),)", '')
+    return render_template("ordertotal.html", outString = orderTotal, sum=editedText)
