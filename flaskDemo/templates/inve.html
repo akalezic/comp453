@@ -7,6 +7,7 @@
 		</div>
 		<small class="text-muted">Quantity On Hand: {{ inve.qtyOnHand }}</small>
         <br><small class="text-muted">Sell Price: ${{ inve.sell_price }}</small></br>
+        <a class="btn btn-primary btn-sm mt-1 mb-1" href="{{ url_for('sell', project_id=inve.project_id) }}">Add to Order</a>
     </div>
   </article>
 {% endblock content %}

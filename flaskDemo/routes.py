@@ -1,12 +1,16 @@
 import os
 import secrets
+from unicodedata import name
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from flaskDemo import app, db, bcrypt
-from flaskDemo.models import User, Buyer, Buyer_Order, Item, Item_Order, Vendor, Project, Order_Line, Required_Items, Inventory
-from flaskDemo.forms import AddItemForm, AddProjectForm, RegistrationForm, LoginForm, UpdateAccountForm, UpdateItemForm, UpdateProjectForm, AddProjectToInventoryForm
+from flaskDemo.models import User, Buyer, Buyer_Order, Item, Item_Order, Vendor, Project, Order_Line, Required_Items, Inventory, Buyer_Order
+from flaskDemo.forms import AddItemForm, AddProjectForm, CreateOrder, RegistrationForm, LoginForm, UpdateAccountForm, UpdateItemForm, UpdateProjectForm, AddProjectToInventoryForm, MarkAsSold
 from flask_login import login_user, current_user, logout_user, login_required
 from datetime import datetime
+from sqlalchemy import func
+
+
 
 
 @app.route("/")
@@ -71,6 +75,41 @@ def inventory():
 def inve(project_id):
     inve = Inventory.query.get_or_404(project_id)
     return render_template('inve.html', inve=inve)
+
+@app.route("/inventory/<project_id>/sell", methods=['GET', 'POST'])
+def sell(project_id):
+    project_id = Inventory.query.get_or_404(project_id)
+    form = MarkAsSold()
+    if form.validate_on_submit():
+        if Order_Line.query.filter_by(order_id=form.order_id.data, invID=project_id.project_id).first():
+            flash('This item has already been added to Order #' + str(form.order_id.data) + "!", 'danger')
+        else:
+            markSold = Order_Line(invID=project_id.project_id, order_id=form.order_id.data, qtyOrdered=form.qtyOrdered.data, total_price=(project_id.sell_price)*(form.qtyOrdered.data))
+            db.session.add(markSold)
+            db.session.commit()
+            flash('The item has been marked as sold!', 'success')
+            return redirect(url_for('customerorder'))
+        
+    return render_template("sell.html", title="Add Item to Order", form=form, legend="Add Item '" + str(project_id.item_name) + "' to Order")
+
+
+@app.route("/createorder", methods=['GET', 'POST'])
+@login_required
+def createOrder():
+    form = CreateOrder()
+    checkID = Buyer.query.filter_by(buyer_id=form.buyer_id.data).first()
+    newID = int(str(db.session.query(func.max(Buyer_Order.order_id))[0])[1:-2]) + 1
+    if form.validate_on_submit():
+        buyer = Buyer(buyer_id=form.buyer_id.data, name=form.buyerName.data, address=form.address.data)
+        order = Buyer_Order(buyer_id=form.buyer_id.data, date=form.orderDate.data)
+        if checkID is None:
+            db.session.add(buyer)
+        db.session.add(order)
+        db.session.commit()
+        flash('Order created!', 'success')
+        return redirect(url_for('inventory'))
+
+    return render_template("createorder.html", title="New Order", form=form, legend="New Order (Order ID: " + str(newID) + ")" )
     
 @app.route("/customerorder")
 def customerorder():

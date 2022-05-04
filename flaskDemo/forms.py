@@ -5,7 +5,7 @@ from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextA
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError,Regexp, Optional
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from flaskDemo import db
-from flaskDemo.models import User, Item, Project
+from flaskDemo.models import Buyer_Order, User, Item, Project, Buyer
 from wtforms.fields.html5 import DateField
 
 class RegistrationForm(FlaskForm):
@@ -117,3 +117,44 @@ class AddProjectToInventoryForm(FlaskForm):
     production_cost = DecimalField("Production Cost", places = 2, validators=[Optional()])
     sell_price = DecimalField("Sell Price", places = 2, validators=[Optional()])
     submit = SubmitField("Add project to inventory")
+
+class MarkAsSold(FlaskForm):
+    order_id = IntegerField("Order ID", validators=[DataRequired()])
+    qtyOrdered =  IntegerField("Quantity Ordered", validators=[DataRequired()])
+    submit = SubmitField("Add to Order")
+
+    def validate_order_id(self, order_id):
+        order = Buyer_Order.query.filter_by(order_id=self.order_id.data).first()
+        if order is None:
+            raise ValidationError("That Order ID doesn't exist.")
+
+
+class CreateOrder(FlaskForm):
+    buyer_id =  IntegerField("Buyer ID", validators=[DataRequired()])
+    buyerName = StringField("Buyer Name (Optional)", validators=[Optional()])
+    address = StringField("Buyer Address (Optional)", validators=[Optional()])
+    orderDate =  DateField("Order Date", format='%Y-%m-%d', validators=[DataRequired()])
+    submit = SubmitField("Create New Order")
+
+    def validate(self):
+        if not super(CreateOrder, self).validate():
+            return False
+        result = True
+        buyer = Buyer.query.filter_by(buyer_id=self.buyer_id.data).first()
+        if buyer is None:
+            if len(self.buyerName.data) == 0 or len(self.address.data) == 0:
+                self.buyer_id.errors.append("That Buyer ID doesn't exist. Fill out Buyer ID, name, and Address to continue")
+                result = False
+        elif buyer.name != self.buyerName.data:
+            self.buyer_id.errors.append(f"Buyer ID {buyer.buyer_id} exists but this data doesn't match the registered name: {str(buyer.name)}. Use a different buyer ID or leave  the name field blank.")
+            result = False
+        elif buyer.address != self.address.data:
+            self.buyer_id.errors.append(f"Buyer ID {buyer.buyer_id} exists but this data doesn't match the registered address: {str(buyer.address)}. Use a different buyer ID or leave the address field blank.")
+            result = False
+        return result
+
+class AddOrderLines(FlaskForm):
+    project_id =  SelectField("Add Inventory to Order", [DataRequired()])
+    submit = SubmitField("Add to Order")
+    
+    
