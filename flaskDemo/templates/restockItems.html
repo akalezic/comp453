@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block content %}
+  {% for row in outString %}
+    <article class="media content-section">
+      <div class="media-body">
+        <div class="article-metadata">	  
+          <h2><a class="article-title" href="{{ url_for('item', item_id=row.item_id) }}">{{ row['name'] }} - {{ row['item_type'] }}</a></h2>		  
+        </div>
+        <small class="text-muted">Quantity: {{ row['quantity_on_hand'] }}</small>
+      </div>
+    </article>
+  {% endfor %}
+{% endblock content %}
+
+{% block sidebar %}
+<a class="btn btn-danger btn-sm mt-1 mb-1" style="justify-self:right" href="{{ url_for('restockItems') }}">Restock Items</a>
+<div class="content-section">
+  <h3>Vendors</h3>
+  <p class='text-muted'>Vendors that provide the materials for your work.
+    <ul class="list-group">
+      {% for vendor in vendors %}
+        <li class="list-group-item list-group-item-light">{{vendor.name}}</li>
+      {% endfor %}
+    </ul>
+  </p>
+</div>
+{% endblock sidebar %}

@@ -4,7 +4,7 @@
        <article class="media content-section">
           <div class="media-body">
             <div class="article-metadata">
-              <a class="article-title">Order ID: {{ row['order_id'] }}</a>
+              <a class="article-title" href="{{ url_for('get_order_total', order_id=row.order_id) }}">Order ID: {{ row['order_id'] }}</a>
             </div>
               <small class="text-muted">Order Placed: {{ row['date'] }}</small>
               <br><small class="text-muted">Buyer ID: {{ row['buyer_id'] }}</small></br>

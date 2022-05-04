@@ -1,16 +1,17 @@
 {% extends "layout.html" %}
 {% block content %}
     {% for row in outString %}
-       <article class="media content-section">
-          <div class="media-body">
-            <div class="article-metadata">
-              <a class="mr-2" href="#">{{ row }}</a>		  
-              <small class="text-muted">{{ row['project_id'] }}  {{ row['item_name'] }}</small>		  
-            </div>
-			<h2><a class="article-title" href="{{ url_for('inve', project_id=row.project_id) }}">{{ row.item_desc }}</a></h2>
-           
-          </div>
-        </article>
+    <article class="media content-section">
+      <div class="media-body">
+        <div class="article-metadata">
+          <h2><a class="article-title" href="{{ url_for('inve', project_id=row.project_id) }}">{{ row.item_desc }}</a></h2>
+        </div>
+        <div>
+          <a class="mr-2">{{ row }}</a>		  
+          <small class="text-muted">{{ row['project_id'] }}  {{ row['item_name'] }}</small>		  
+        </div>
+      </div>
+    </article>
      {% endfor %}
 {% endblock content %}
 
